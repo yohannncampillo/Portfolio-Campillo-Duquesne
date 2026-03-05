@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yohann CAMPILLO | Portfolio SISR & Cybersécurité</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --purple: #a855f7;
+            --peach: #ff9a8b;
+            --accent-gradient: linear-gradient(135deg, var(--peach) 0%, var(--purple) 100%);
+            /* Fond légèrement éclairci vers un bleu/violet nuit au lieu du noir pur */
+            --bg-dark: #0a0a10; 
+            --glass: rgba(15, 15, 20, 0.7);
+        }
+
+        /* Gestion de l'ancre pour compenser la hauteur de la navbar fixe */
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 120px; 
+        }
+
+        body { 
+            background-color: var(--bg-dark);
+            color: #e2e8f0; 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
+            overflow-y: scroll; /* Force l'affichage constant de la barre verticale */
+        }
+
+        /* Personnalisation de la Scrollbar (Verticale et Horizontale) */
+        ::-webkit-scrollbar {
+            width: 14px; 
+            height: 12px; /* Ajout pour la barre horizontale */
+            background: var(--bg-dark); 
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+            border-left: 1px solid rgba(255, 255, 255, 0.08); 
+            border-top: 1px solid rgba(255, 255, 255, 0.08); /* Pour la barre horizontale */
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom right, var(--peach), var(--purple));
+            border-radius: 10px;
+            border: 3px solid var(--bg-dark); 
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(to bottom right, #ffb3a6, #c084fc);
+        }
+
+        /* Fond Cybersécurité : Grille technologique */
+        .bg-grid {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background-size: 40px 40px;
+            background-image: 
+                linear-gradient(to right, rgba(168, 85, 247, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(168, 85, 247, 0.05) 1px, transparent 1px);
+            z-index: -2;
+            /* Fondu de la grille en haut et en bas pour plus de douceur */
+            mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+            -webkit-mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+            pointer-events: none;
+        }
+
+        /* Halo interactif de la souris */
+        .bg-glow {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(255, 154, 139, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at var(--mouse-x, 80%) var(--mouse-y, 20%), rgba(168, 85, 247, 0.1) 0%, transparent 40%);
+            z-index: -1;
+            transition: background 0.1s ease;
+            pointer-events: none;
+        }
+
+        /* Texte en dégradé animé */
+        .text-gradient {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% auto;
+            animation: shine 4s linear infinite;
+        }
+        @keyframes shine { to { background-position: 200% center; } }
+
+        /* Navigation Glassmorphism */
+        .nav-glass {
+            backdrop-filter: blur(16px);
+            background: rgba(10, 10, 16, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Style spécifique pour le lien actif du menu */
+        .nav-item {
+            transition: all 0.3s ease;
+        }
+        .nav-item.active {
+            color: var(--peach) !important;
+            text-shadow: 0 0 10px rgba(255, 154, 139, 0.4);
+        }
+
+        /* Animation d'apparition spécifique à la navbar centrée */
+        .nav-reveal {
+            animation: navFadeIn 0.8s cubic-bezier(0.5, 0, 0, 1) forwards;
+        }
+        @keyframes navFadeIn {
+            from { opacity: 0; transform: translate(-50%, -20px); }
+            to { opacity: 1; transform: translate(-50%, 0); }
+        }
+
+        /* Design des cartes */
+        .cyber-card {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+        .cyber-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(168, 85, 247, 0.3);
+            box-shadow: 0 15px 30px -10px rgba(168, 85, 247, 0.2);
+        }
+
+        /* Coins décoratifs Cyber */
+        .corner {
+            position: absolute; width: 10px; height: 10px; opacity: 0.5; transition: 0.4s;
+        }
+        .c-tl { top: -1px; left: -1px; border-top: 2px solid; border-left: 2px solid; }
+        .c-br { bottom: -1px; right: -1px; border-bottom: 2px solid; border-right: 2px solid; }
+        
+        /* Variations de couleurs pour les coins */
+        .corner-purple { border-color: var(--purple); }
+        .corner-peach { border-color: var(--peach); }
+        
+        .cyber-card:hover .corner { opacity: 1; filter: drop-shadow(0 0 8px currentColor); }
+
+        /* Boutons d'action */
+        .btn-action {
+            background: var(--accent-gradient);
+            background-size: 200% auto;
+            transition: 0.4s;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .btn-action:hover {
+            background-position: right center;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px -5px rgba(168, 85, 247, 0.4);
+        }
+
+        /* Boutons de filtres du portfolio */
+        .filter-btn {
+            color: #64748b; transition: all 0.3s ease; position: relative; padding-bottom: 4px; cursor: pointer;
+        }
+        .filter-btn:hover { color: var(--peach); }
+        .filter-btn.active { color: white; }
+        .filter-btn.active::after {
+            content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 2px;
+            background: var(--accent-gradient);
+            box-shadow: 0 0 8px var(--purple);
+        }
+
+        /* Système de filtrage dynamique */
+        .mission-item { transition: opacity 0.4s ease, transform 0.4s ease; }
+        .mission-hidden { opacity: 0; transform: scale(0.9) translateY(20px); pointer-events: none; position: absolute; visibility: hidden; }
+
+        /* Animation d'apparition au scroll (Scroll Reveal) */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Grille Cyber de fond -->
+    <div class="bg-grid"></div>
+
+    <!-- Halo lumineux interactif -->
+    <div class="bg-glow" id="glow"></div>
+
+    <!-- NAVBAR -->
+    <nav class="fixed top-6 left-1/2 -translate-x-1/2 w-[90%] max-w-[1400px] z-50 nav-glass rounded-2xl px-6 py-4 flex items-center nav-reveal">
+        <!-- Gauche : Logo -->
+        <div class="flex-1 flex justify-start">
+            <a href="#" class="flex items-center gap-4 group w-max">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#ff9a8b] to-[#a855f7] flex items-center justify-center font-black text-white shadow-lg shadow-[#a855f7]/30 group-hover:scale-105 transition">Y</div>
+                <span class="font-black tracking-tighter text-white uppercase text-xl hidden sm:block group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-[#ff9a8b] group-hover:to-[#a855f7] transition">CAMPILLO</span>
+            </a>
+        </div>
+
+        <!-- Centre : Liens (Centrage absolu pour une symétrie parfaite) -->
+        <div class="hidden lg:flex absolute left-1/2 -translate-x-1/2 gap-6 xl:gap-8 items-center text-[9px] xl:text-[10px] font-black uppercase tracking-widest whitespace-nowrap">
+            <a href="#parcours" class="nav-item text-slate-400 hover:text-white transition">Présentation</a>
+            <a href="#portfolio" class="nav-item text-slate-400 hover:text-white transition">Réalisations professionnelles</a>
+            <a href="#labo" class="nav-item text-slate-400 hover:text-white transition">Développement professionnel</a>
+            <a href="#contact" class="nav-item text-slate-400 hover:text-white transition">Contact professionnel</a>
+        </div>
+        
+        <!-- Droite : Espace vide pour équilibrer la barre et les réseaux sociaux -->
+        <div class="flex-1 flex justify-end gap-5">
+            <a href="https://linkedin.com" target="_blank" class="text-slate-400 hover:text-[#a855f7] transition"><i class="fab fa-linkedin-in text-lg"></i></a>
+            <a href="https://github.com/yohannncampillo" target="_blank" class="text-slate-400 hover:text-[#ff9a8b] transition"><i class="fab fa-github text-lg"></i></a>
+        </div>
+    </nav>
+
+    <!-- HEADER / HERO -->
+    <header class="pt-48 pb-32 container mx-auto px-6 text-center reveal">
+        <div class="inline-flex items-center gap-2 mb-8 px-4 py-1.5 rounded-full bg-[#a855f7]/10 border border-[#a855f7]/20">
+            <span class="relative flex h-2 w-2">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#a855f7] opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-[#a855f7]"></span>
+            </span>
+            <span class="text-[10px] font-extrabold tracking-widest text-[#a855f7] uppercase">System Status: Secure</span>
+        </div>
+
+        <h1 class="text-6xl md:text-8xl lg:text-9xl font-black mb-6 tracking-tighter leading-none uppercase">
+            YOHANN<br><span class="text-gradient">CAMPILLO</span>
+        </h1>
+        
+        <p class="font-mono text-[#ff9a8b] text-lg md:text-xl mb-6 tracking-widest">>_ Technicien Systèmes et Réseaux</p>
+        <p class="text-slate-400 max-w-2xl mx-auto mb-12 text-sm md:text-base leading-relaxed">
+           Bonjour, je suis Campillo-Duquesne Yohann et j'ai 21 ans. <br> <br>Je me spécialise en <b>Sécurité, Systèmes et Réseaux</b>. <br> <br>Actuellement en BTS SIO (SISR) chez <b>IPSSI, grande école d'informatique</b>. <br> <br><b>Mon projet:</b> Atteindre le Master en cybersécurité
+        </p>
+
+        <div class="flex flex-col sm:flex-row justify-center gap-6 mb-20">
+            <button onclick="openPdfModal('synthese et cv/CAMPILLO--DUQUESNE-Yohann-cv.pdf', 'Mon CV - Yohann Campillo')" class="btn-action px-10 py-4 rounded-xl font-bold uppercase text-xs tracking-widest flex items-center justify-center gap-3">
+                <i class="fas fa-file-pdf"></i> Aperçu de mon CV
+            </button>
+            
+        </div>
+    </header>
+
+    <!-- SECTION PARCOURS -->
+    <section id="parcours" class="py-24 bg-white/[0.01] border-t border-white/5 reveal">
+        <div class="container mx-auto px-6">
+            <h2 class="text-xs font-black tracking-[0.4em] text-[#a855f7] uppercase mb-4 text-center">CV & Évolution</h2>
+            <h3 class="text-4xl md:text-5xl font-black uppercase tracking-tighter text-center mb-16">Mon <span class="text-gradient">Parcours</span></h3>
+
+            <div class="grid lg:grid-cols-2 gap-12 items-start">
+                
+                <!-- COLONNE EXPÉRIENCES -->
+                <div class="space-y-6">
+                    <h4 class="text-sm font-black uppercase mb-8 flex items-center gap-3"><i class="fas fa-briefcase text-[#a855f7]"></i> Expériences Professionnelles</h4>
+                    
+                    <!-- IPSSI -->
+                    <div class="cyber-card p-6 rounded-2xl group relative overflow-hidden">
+                        <div class="corner corner-purple c-tl"></div><div class="corner corner-purple c-br"></div>
+                        <div class="absolute left-0 top-0 w-1 h-full bg-[#a855f7] opacity-50 group-hover:opacity-100 transition"></div>
+                        
+                        <span class="absolute top-6 right-6 text-[9px] font-black text-[#a855f7] bg-[#a855f7]/10 px-2 py-1 rounded border border-[#a855f7]/20">Depuis oct. 2025</span>
+                        
+                        <h5 class="text-white font-bold text-lg leading-tight pr-20">Technicien Systèmes et Réseaux</h5>
+                        <p class="text-[#ff9a8b] text-[11px] font-bold uppercase tracking-widest mt-1 mb-4">IPSSI SQY - Projet Pédagogique</p>
+                        
+                        <ul class="text-slate-400 text-[12px] space-y-2">
+                            <li><i class="fas fa-check text-[#a855f7] mr-2"></i>Infrastructure AD, réseaux (DNS/DHCP)</li>
+                            <li><i class="fas fa-check text-[#a855f7] mr-2"></i>Supervision (SIEM/EDR) & Inventaire</li>
+                            <li><i class="fas fa-check text-[#a855f7] mr-2"></i>Création & Hébergement Site Web (HTML/CSS/JS)</li>
+                        </ul>
+                    </div>
+
+                    <!-- King Jouet -->
+                    <div class="cyber-card p-6 rounded-2xl group relative overflow-hidden">
+                        <div class="corner corner-peach c-tl"></div><div class="corner corner-peach c-br"></div>
+                        <div class="absolute left-0 top-0 w-1 h-full bg-[#ff9a8b] opacity-30 group-hover:opacity-100 transition"></div>
+                        
+                        <span class="absolute top-6 right-6 text-[9px] font-black text-[#ff9a8b] bg-[#ff9a8b]/10 px-2 py-1 rounded border border-[#ff9a8b]/20">Sept. 2024 - Sept. 2025</span>
+                        
+                        <h5 class="text-white font-bold text-lg leading-tight pr-24">Vendeur & Référent Caisse</h5>
+                        <p class="text-[#a855f7] text-[11px] font-bold uppercase tracking-widest mt-1 mb-4">King Jouet - CDI</p>
+                        
+                        <ul class="text-slate-400 text-[12px] space-y-2">
+                            <li><i class="fas fa-angle-right text-[#ff9a8b] mr-2"></i>Encadrement d'équipe et gestion de caisse</li>
+                            <li><i class="fas fa-angle-right text-[#ff9a8b] mr-2"></i>Vente, conseil et réception de marchandises</li>
+                        </ul>
+                    </div>
+
+                    <!-- Monoprix -->
+                    <div class="cyber-card p-6 rounded-2xl group relative overflow-hidden">
+                        <div class="corner corner-purple c-tl"></div><div class="corner corner-purple c-br"></div>
+                        <div class="absolute left-0 top-0 w-1 h-full bg-[#a855f7] opacity-30 group-hover:opacity-100 transition"></div>
+                        
+                        <span class="absolute top-6 right-6 text-[9px] font-black text-[#a855f7] bg-[#a855f7]/10 px-2 py-1 rounded border border-[#a855f7]/20">Mars - Août 2024</span>
+                        
+                        <h5 class="text-white font-bold text-lg leading-tight pr-24">Vendeur / Conseiller textile</h5>
+                        <p class="text-[#ff9a8b] text-[11px] font-bold uppercase tracking-widest mt-1 mb-4">Monoprix - CDD</p>
+                        
+                        <ul class="text-slate-400 text-[12px] space-y-2">
+                            <li><i class="fas fa-angle-right text-[#a855f7] mr-2"></i>Vente et conseil client (secteur textile)</li>
+                            <li><i class="fas fa-angle-right text-[#a855f7] mr-2"></i>Mise en rayon et présentation des produits</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- COLONNE FORMATIONS -->
+                <div class="space-y-6">
+                    <h4 class="text-sm font-black uppercase mb-8 flex items-center gap-3"><i class="fas fa-graduation-cap text-[#ff9a8b]"></i> Formations</h4>
+                    
+                    <!-- BTS SIO -->
+                    <div class="cyber-card p-6 rounded-2xl group relative overflow-hidden">
+                        <div class="corner corner-peach c-tl"></div><div class="corner corner-peach c-br"></div>
+                        <div class="absolute left-0 top-0 w-1 h-full bg-[#ff9a8b] opacity-50 group-hover:opacity-100 transition"></div>
+                        
+                        <span class="absolute top-6 right-6 text-[9px] font-black text-[#ff9a8b] bg-[#ff9a8b]/10 px-2 py-1 rounded border border-[#ff9a8b]/20">2025 - 2027</span>
+                        
+                        <h5 class="text-white font-bold text-lg leading-tight pr-20">BTS SIO - Option SISR</h5>
+                        <p class="text-[#a855f7] text-[11px] font-bold uppercase tracking-widest mt-1">IPSSI SQY - Grande École Informatique</p>
+                    </div>
+
+                    <!-- L1 UVSQ -->
+                    <div class="cyber-card p-6 rounded-2xl group relative overflow-hidden">
+                        <div class="corner corner-purple c-tl"></div><div class="corner corner-purple c-br"></div>
+                        <div class="absolute left-0 top-0 w-1 h-full bg-[#a855f7] opacity-30 group-hover:opacity-100 transition"></div>
+                        
+                        <span class="absolute top-6 right-6 text-[9px] font-black text-[#a855f7] bg-[#a855f7]/10 px-2 py-1 rounded border border-[#a855f7]/20">2023 - 2024</span>
+                        
+                        <h5 class="text-white font-bold text-lg leading-tight pr-20">L1 Langue & Littérature (Anglais)</h5>
+                        <p class="text-[#ff9a8b] text-[11px] font-bold uppercase tracking-widest mt-1">Université de Versailles SQY</p>
+                    </div>
+
+                    <!-- BAC -->
+                    <div class="cyber-card p-6 rounded-2xl group relative overflow-hidden">
+                        <div class="corner corner-peach c-tl"></div><div class="corner corner-peach c-br"></div>
+                        <div class="absolute left-0 top-0 w-1 h-full bg-[#ff9a8b] opacity-30 group-hover:opacity-100 transition"></div>
+                        
+                        <span class="absolute top-6 right-6 text-[9px] font-black text-[#ff9a8b] bg-[#ff9a8b]/10 px-2 py-1 rounded border border-[#ff9a8b]/20">2021 - 2023</span>
+                        
+                        <h5 class="text-white font-bold text-lg leading-tight pr-20">Baccalauréat Général</h5>
+                        <p class="text-[#a855f7] text-[11px] font-bold uppercase tracking-widest mt-1">Spécialités AMC et SES</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- RÉFÉRENTIEL SIEC -->
+    <section id="referentiel" class="py-24 container mx-auto px-6 border-t border-white/5 reveal">
+        <div class="text-center mb-16">
+            <h2 class="text-xs font-black tracking-[0.4em] text-[#ff9a8b] uppercase mb-4">Critères Officiels SIEC</h2>
+            <h3 class="text-4xl md:text-5xl font-black uppercase tracking-tighter">Référentiel <span class="text-gradient">BTS SIO</span></h3>
+        </div>
+
+        <!-- Tronc Commun (Blocs 1 & 3) -->
+        <div class="mb-12 max-w-5xl mx-auto">
+            <h4 class="text-lg font-black text-white uppercase mb-6 flex items-center gap-3 tracking-wide border-b border-white/10 pb-4">
+                <i class="fas fa-layer-group text-[#a855f7]"></i> Tronc Commun
+            </h4>
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Bloc 1: Support -->
+                <div class="cyber-card p-8 rounded-2xl group relative">
+                    <div class="corner corner-purple c-tl"></div><div class="corner corner-purple c-br"></div>
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-12 h-12 rounded-xl bg-[#a855f7]/10 flex items-center justify-center border border-[#a855f7]/20 group-hover:bg-[#a855f7]/30 transition">
+                            <i class="fas fa-headset text-[#a855f7] text-xl"></i>
+                        </div>
+                        <h4 class="font-extrabold text-white uppercase text-sm leading-tight">Support & Services <br><span class="text-[#a855f7] text-[10px] tracking-widest">BLOC 1</span></h4>
+                    </div>
+                    <ul class="text-[12px] text-slate-400 space-y-3 font-medium">
+                        <li class="flex items-start gap-2"><i class="fas fa-chevron-right text-[#a855f7] text-[10px] mt-1"></i> Gérer le patrimoine informatique</li>
+                        <li class="flex items-start gap-2"><i class="fas fa-chevron-right text-[#a855f7] text-[10px] mt-1"></i> Répondre aux incidents & demandes d'assistance</li>
+                        <li class="flex items-start gap-2"><i class="fas fa-chevron-right text-[#a855f7] text-[10px] mt-1"></i> Développer la présence en ligne & mode projet</li>
+                    </ul>
+                </div>
+
+                <!-- Bloc 3: Cyber -->
+                <div class="cyber-card p-8 rounded-2xl group border-[#ff9a8b]/30 bg-gradient-to-br from-[#ff9a8b]/5 to-transparent relative">
+                    <div class="corner corner-peach c-tl"></div><div class="corner corner-peach c-br"></div>
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-12 h-12 rounded-xl bg-[#ff9a8b]/10 flex items-center justify-center border border-[#ff9a8b]/20 group-hover:bg-[#ff9a8b]/30 transition">
+                            <i class="fas fa-shield-alt text-[#ff9a8b] text-xl"></i>
+                        </div>
+                        <h4 class="font-extrabold text-white uppercase text-sm leading-tight">Cybersécurité <br><span class="text-[#ff9a8b] text-[10px] tracking-widest">BLOC 3</span></h4>
+                    </div>
+                    <ul class="text-[12px] text-slate-400 space-y-3 font-medium">
+                        <li class="flex items-start gap-2"><i class="fas fa-chevron-right text-[#ff9a8b] text-[10px] mt-1"></i> Protéger les données à caractère personnel (RGPD)</li>
+                        <li class="flex items-start gap-2"><i class="fas fa-chevron-right text-[#ff9a8b] text-[10px] mt-1"></i> Sécuriser les équipements et usages utilisateurs</li>
+                        <li class="flex items-start gap-2"><i class="fas fa-chevron-right text-[#ff9a8b] text-[10px] mt-1"></i> Garantir la disponibilité face aux cyberattaques</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Spécialités (Bloc 2) -->
+        <div class="max-w-5xl mx-auto">
+            <h4 class="text-lg font-black text-white uppercase mb-6 flex items-center gap-3 tracking-wide border-b border-white/10 pb-4">
+                <i class="fas fa-code-branch text-[#ff9a8b]"></i> Les Spécialités (Bloc 2)
+            </h4>
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- SISR (Highlight) -->
+                <div class="cyber-card p-8 rounded-2xl group border-[#a855f7]/50 shadow-[0_0_30px_rgba(168,85,247,0.15)] relative overflow-hidden transform hover:-translate-y-2 transition-all duration-300">
+                    <div class="absolute top-0 right-0 bg-[#a855f7] text-white text-[9px] font-black px-4 py-1.5 rounded-bl-xl uppercase tracking-widest shadow-lg">Mon Option</div>
+                    <div class="absolute -inset-1 bg-gradient-to-br from-[#a855f7]/20 to-transparent blur-xl z-[-1] opacity-50"></div>
+                    <div class="corner corner-purple c-tl"></div><div class="corner corner-purple c-br"></div>
+                    
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#a855f7] to-purple-900 flex items-center justify-center shadow-lg shadow-[#a855f7]/40">
+                            <i class="fas fa-network-wired text-white text-xl"></i>
+                        </div>
+                        <h4 class="font-extrabold text-white uppercase text-sm leading-tight">Spécialité SISR <br><span class="text-[#a855f7] text-[10px] tracking-widest">SYSTÈMES & RÉSEAUX</span></h4>
+                    </div>
+                    <ul class="text-[12px] text-slate-200 space-y-3 font-medium">
+                        <li class="flex items-start gap-2"><i class="fas fa-check text-[#a855f7] text-[12px] mt-0.5"></i> Concevoir une solution d'infrastructure réseau</li>
+                        <li class="flex items-start gap-2"><i class="fas fa-check text-[#a855f7] text-[12px] mt-0.5"></i> Installer, tester et déployer l'infrastructure</li>
+                        <li class="flex items-start gap-2"><i class="fas fa-check text-[#a855f7] text-[12px] mt-0.5"></i> Exploiter, dépanner et superviser les services</li>
+                    </ul>
+                </div>
+
+                <!-- SLAM (Muted) -->
+                <div class="p-8 rounded-2xl border border-white/5 bg-white/[0.02] opacity-60 hover:opacity-100 transition-opacity duration-300 relative">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-12 h-12 rounded-xl bg-slate-800/50 flex items-center justify-center border border-slate-700/50">
+                            <i class="fas fa-laptop-code text-slate-500 text-xl"></i>
+                        </div>
+                        <h4 class="font-extrabold text-slate-400 uppercase text-sm leading-tight">Spécialité SLAM <br><span class="text-slate-600 text-[10px] tracking-widest">DÉVELOPPEMENT LOGICIEL</span></h4>
+                    </div>
+                    <ul class="text-[12px] text-slate-500 space-y-3 font-medium">
+                        <li class="flex items-start gap-2"><i class="fas fa-times text-slate-700 text-[12px] mt-0.5"></i> Concevoir et développer une solution applicative</li>
+                        <li class="flex items-start gap-2"><i class="fas fa-times text-slate-700 text-[12px] mt-0.5"></i> Assurer la maintenance corrective ou évolutive</li>
+                        <li class="flex items-start gap-2"><i class="fas fa-times text-slate-700 text-[12px] mt-0.5"></i> Gérer les données (Conception SGBD)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        
+    </section>
+
+    <!-- SECTION PORTFOLIO (Projets) -->
+    <section id="portfolio" class="py-24 container mx-auto px-6 border-t border-white/5 reveal">
+        <header class="text-center mb-16">
+            <h2 class="text-4xl md:text-5xl font-black uppercase tracking-tighter">Mes   <span class="text-gradient">Réalisations pro / Projets</span></h2>
+            
+            <div class="mt-12 flex justify-center gap-6 flex-wrap">
+                <button class="filter-btn ctx-btn active text-xs font-bold uppercase tracking-widest" onclick="filterMissions('ctx', 'all', this)">Tous</button>
+                <button class="filter-btn ctx-btn text-xs font-bold uppercase tracking-widest" onclick="filterMissions('ctx', 'pro', this)">Professionnel</button>
+                <button class="filter-btn ctx-btn text-xs font-bold uppercase tracking-widest" onclick="filterMissions('ctx', 'ecole', this)">École</button>
+                <button class="filter-btn ctx-btn text-xs font-bold uppercase tracking-widest" onclick="filterMissions('ctx', 'perso', this)">Personnel</button>
+            </div>
+
+            <div class="mt-8 flex justify-center gap-4 md:gap-6 flex-wrap pb-10 border-b border-white/5">
+                <button class="filter-btn comp-btn active text-[10px] font-bold uppercase tracking-widest" onclick="filterMissions('comp', 'all', this)">Tout</button>
+                <button class="filter-btn comp-btn text-[10px] font-bold uppercase tracking-widest" onclick="filterMissions('comp', 'patrimoine', this)">Gérer le patrimoine</button>
+                <button class="filter-btn comp-btn text-[10px] font-bold uppercase tracking-widest" onclick="filterMissions('comp', 'incident', this)">Incidents</button>
+                <button class="filter-btn comp-btn text-[10px] font-bold uppercase tracking-widest" onclick="filterMissions('comp', 'presence', this)">Présence web</button>
+                <button class="filter-btn comp-btn text-[10px] font-bold uppercase tracking-widest" onclick="filterMissions('comp', 'projet', this)">Mode projet</button>
+                <button class="filter-btn comp-btn text-[10px] font-bold uppercase tracking-widest" onclick="filterMissions('comp', 'service', this)">Dispo. service</button>
+            </div>
+        </header>
+
+        <!-- CONTAINER À DÉFILEMENT HORIZONTAL (CARROUSEL) -->
+        <div id="missions-grid" class="flex overflow-x-auto gap-8 pb-10 pt-4 snap-x snap-mandatory">
+            
+            <!-- Projet : pfSense -->
+            <div class="mission-item cyber-card p-8 group flex flex-col h-[420px] flex-shrink-0 w-[85vw] md:w-[380px] snap-center" data-comp="patrimoine" data-ctx="ecole">
+                <div class="corner corner-purple c-tl"></div><div class="corner corner-purple c-br"></div>
+                <div class="flex gap-2 mb-6">
+                    <span class="text-[9px] px-2 py-1 rounded-md border border-[#a855f7]/30 text-[#a855f7] font-bold uppercase">École</span>
+                    <span class="text-[9px] px-2 py-1 rounded-md border border-white/10 text-slate-400 font-bold uppercase">Patrimoine</span>
+                </div>
+                <h3 class="text-xl font-extrabold uppercase mb-4 text-white group-hover:text-[#ff9a8b] transition">Infrastructure pfSense</h3>
+                <p class="text-slate-400 text-xs leading-relaxed mb-8 flex-grow">Déploiement d'une passerelle sécurisée multi-zones logiques (DMZ, LAN, VIP, SRV) sur VirtualBox.</p>
+                <div class="flex gap-4 mt-auto">
+                    <a href="tp 1,2,3/Documentation TP 1.pdf" target="_blank" class="text-[9px] font-black uppercase text-[#a855f7] hover:text-white transition underline underline-offset-4">Documentation</a>
+                </div>
+            </div>
+
+            <!-- Projet : DHCP/DNS (TP2) -->
+            <div class="mission-item cyber-card p-8 group flex flex-col h-[420px] flex-shrink-0 w-[85vw] md:w-[380px] snap-center" data-comp="service" data-ctx="ecole">
+                <div class="corner corner-peach c-tl"></div><div class="corner corner-peach c-br"></div>
+                <div class="flex gap-2 mb-6">
+                    <span class="text-[9px] px-2 py-1 rounded-md border border-[#ff9a8b]/30 text-[#ff9a8b] font-bold uppercase">École</span>
+                    <span class="text-[9px] px-2 py-1 rounded-md border border-white/10 text-slate-400 font-bold uppercase">Dispo. Service</span>
+                </div>
+                <h3 class="text-xl font-extrabold uppercase mb-4 text-white group-hover:text-[#a855f7] transition">Déploiement DHCP/DNS</h3>
+                <p class="text-slate-400 text-xs leading-relaxed mb-8 flex-grow">Installation et configuration de serveurs DHCP/DNS sous Windows Server 2019 (Full PowerShell) avec intégration d'un relais DHCP pfSense pour les clients Debian.</p>
+                <div class="flex gap-4 mt-auto">
+                    <a href="tp 1,2,3/Documentation TP 2 (1).pdf" target="_blank" class="text-[9px] font-black uppercase text-[#ff9a8b] hover:text-white transition underline underline-offset-4">Documentation</a>
+                </div>
+            </div>
+
+            <!-- Projet : Active Directory (TP3) -->
+            <div class="mission-item cyber-card p-8 group flex flex-col h-[420px] flex-shrink-0 w-[85vw] md:w-[380px] snap-center" data-comp="patrimoine" data-ctx="ecole">
+                <div class="corner corner-purple c-tl"></div><div class="corner corner-purple c-br"></div>
+                <div class="flex gap-2 mb-6">
+                    <span class="text-[9px] px-2 py-1 rounded-md border border-[#a855f7]/30 text-[#a855f7] font-bold uppercase">École</span>
+                    <span class="text-[9px] px-2 py-1 rounded-md border border-white/10 text-slate-400 font-bold uppercase">Patrimoine</span>
+                </div>
+                <h3 class="text-xl font-extrabold uppercase mb-4 text-white group-hover:text-[#ff9a8b] transition">Infrastructure AD DS</h3>
+                <p class="text-slate-400 text-xs leading-relaxed mb-8 flex-grow">Déploiement d'une forêt Active Directory, intégration des services DHCP/DNS, gestion des comptes utilisateurs en CLI et intégration de clients Windows 11 & Linux (SSSD, Kerberos).</p>
+                <div class="flex gap-4 mt-auto">
+                    <a href="tp 1,2,3/Documentation TP 3.pdf" target="_blank" class="text-[9px] font-black uppercase text-[#a855f7] hover:text-white transition underline underline-offset-4">Documentation</a>
+                </div>
+            </div>
+
+            <!-- Projet : Certifications CNIL -->
+            <div class="mission-item cyber-card p-8 group flex flex-col h-[420px] flex-shrink-0 w-[85vw] md:w-[380px] snap-center" data-comp="projet" data-ctx="perso">
+                <div class="corner corner-peach c-tl"></div><div class="corner corner-peach c-br"></div>
+                <div class="flex gap-2 mb-6">
+                    <span class="text-[9px] px-2 py-1 rounded-md border border-[#ff9a8b]/30 text-[#ff9a8b] font-bold uppercase">Perso</span>
+                    <span class="text-[9px] px-2 py-1 rounded-md border border-white/10 text-slate-400 font-bold uppercase">Mode Projet</span>
+                </div>
+                <h3 class="text-xl font-extrabold uppercase mb-4 text-white group-hover:text-[#a855f7] transition">Certifications CNIL</h3>
+                <p class="text-slate-400 text-xs leading-relaxed mb-6 flex-grow">Validation de l'Atelier RGPD de la CNIL. Compréhension des enjeux de la protection des données personnelles et sécurisation des SI.</p>
+                
+                <!-- Grille compacte des 6 fichiers -->
+                <div class="grid grid-cols-3 gap-2 mt-auto">
+                    <a href="CNIL Certif/Certificat_1 CNIL.pdf" target="_blank" class="text-[9px] font-black uppercase text-[#ff9a8b] hover:text-white transition flex items-center justify-center border border-[#ff9a8b]/20 py-2 rounded bg-[#ff9a8b]/5 hover:bg-[#ff9a8b]/20" title="Module 1">
+                        Mod 1
+                    </a>
+                    <a href="CNIL Certif/Certificat_2 CNIL.pdf" target="_blank" class="text-[9px] font-black uppercase text-[#ff9a8b] hover:text-white transition flex items-center justify-center border border-[#ff9a8b]/20 py-2 rounded bg-[#ff9a8b]/5 hover:bg-[#ff9a8b]/20" title="Module 2">
+                        Mod 2
+                    </a>
+                    <a href="CNIL Certif/Certificat_3 CNIL.pdf" target="_blank" class="text-[9px] font-black uppercase text-[#ff9a8b] hover:text-white transition flex items-center justify-center border border-[#ff9a8b]/20 py-2 rounded bg-[#ff9a8b]/5 hover:bg-[#ff9a8b]/20" title="Module 3">
+                        Mod 3
+                    </a>
+                    <a href="CNIL Certif/Certificat_4 CNIL.pdf" target="_blank" class="text-[9px] font-black uppercase text-[#ff9a8b] hover:text-white transition flex items-center justify-center border border-[#ff9a8b]/20 py-2 rounded bg-[#ff9a8b]/5 hover:bg-[#ff9a8b]/20" title="Module 4">
+                        Mod 4
+                    </a>
+                    <a href="CNIL Certif/Certificat_5 CNIL.pdf" target="_blank" class="text-[9px] font-black uppercase text-[#ff9a8b] hover:text-white transition flex items-center justify-center border border-[#ff9a8b]/20 py-2 rounded bg-[#ff9a8b]/5 hover:bg-[#ff9a8b]/20" title="Module 5">
+                        Mod 5
+                    </a>
+                    <a href="CNIL Certif/Certificat_6 CNIL.pdf" target="_blank" class="text-[9px] font-black uppercase text-[#a855f7] hover:text-white transition flex items-center justify-center gap-1 border border-[#a855f7]/30 py-2 rounded bg-[#a855f7]/10 hover:bg-[#a855f7]/30" title="Attestation Finale">
+                        <i class="fas fa-award"></i> Final
+                    </a>
+                </div>
+            </div>
+            
+        </div>
+        <br>
+        <br>
+        <div class="flex justify-center mt-8">
+             <button onclick="openPdfModal('synthese et cv/8-1 - BTS SIO - 2025 - Annexe 8-1 - Epreuve E5 - Tableau de synthese (1).pdf', 'Tableau de Synthèse (Grille E4)')" class="btn-action px-10 py-4 rounded-xl font-bold uppercase text-xs tracking-widest flex items-center justify-center gap-3">
+                <i class="fas fa-file-pdf"></i> Tableau de Synthèse (Grille E4)
+             </button>
+        </div>
+    </section>
+
+    <!-- SECTION LABO PERSONNEL -->
+    <section id="labo" class="py-24 bg-white/[0.01] border-t border-white/5 reveal">
+        <div class="container mx-auto px-6">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <!-- Explication du Lab -->
+                <div>
+                    <h2 class="text-xs font-black tracking-[0.4em] text-[#a855f7] uppercase mb-4">Environnement de test</h2>
+                    <h3 class="text-4xl md:text-5xl font-black uppercase tracking-tighter mb-8">Mon Lab <span class="text-gradient">Personnel</span></h3>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-8">
+                        Pour monter en compétences et tester des architectures complexes en toute sécurité, j'ai mis en place un laboratoire virtuel complet sous <b>VirtualBox</b>. Il me permet de simuler des environnements d'entreprise et de m'entraîner aux configurations réseau et à la cybersécurité.
+                    </p>
+
+                    <div class="grid grid-cols-2 gap-4 mb-8">
+                        <div class="cyber-card p-4 rounded-xl flex items-center gap-3">
+                            <i class="fab fa-windows text-[#a855f7] text-xl"></i>
+                            <div>
+                                <h4 class="text-white font-bold text-xs uppercase">Win Server 2019</h4>
+                                <p class="text-slate-500 text-[10px] uppercase tracking-widest">AD / DNS / DHCP</p>
+                            </div>
+                        </div>
+                        <div class="cyber-card p-4 rounded-xl flex items-center gap-3">
+                            <i class="fab fa-linux text-[#ff9a8b] text-xl"></i>
+                            <div>
+                                <h4 class="text-white font-bold text-xs uppercase">Debian 12</h4>
+                                <p class="text-slate-500 text-[10px] uppercase tracking-widest">Services Web / BDD</p>
+                            </div>
+                        </div>
+                        <div class="cyber-card p-4 rounded-xl flex items-center gap-3">
+                            <i class="fab fa-windows text-[#a855f7] text-xl"></i>
+                            <div>
+                                <h4 class="text-white font-bold text-xs uppercase">Windows 11</h4>
+                                <p class="text-slate-500 text-[10px] uppercase tracking-widest">Client Test</p>
+                            </div>
+                        </div>
+                        <div class="cyber-card p-4 rounded-xl flex items-center gap-3">
+                            <i class="fas fa-network-wired text-[#ff9a8b] text-xl"></i>
+                            <div>
+                                <h4 class="text-white font-bold text-xs uppercase">pfSense</h4>
+                                <p class="text-slate-500 text-[10px] uppercase tracking-widest">Routage / Pare-feu</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visuel Cyber (Terminal) -->
+                <div class="relative group">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-[#ff9a8b] to-[#a855f7] rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
+                    <div class="relative cyber-card p-6 rounded-2xl bg-[#0a0a0c] font-mono text-xs text-slate-300">
+                        <div class="flex gap-2 mb-4 border-b border-white/10 pb-4">
+                            <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
+                            <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                            <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
+                        </div>
+                        <p class="mb-2"><span class="text-[#a855f7]">yohann@labo</span><span class="text-white">:</span><span class="text-[#ff9a8b]">~</span>$ vboxmanage list runningvms</p>
+                        <p class="text-slate-400 mb-1">"DC-Server-2019" {5a9f...}</p>
+                        <p class="text-slate-400 mb-1">"Debian-Web-01"  {1b3c...}</p>
+                        <p class="text-slate-400 mb-4">"pfSense-Router" {9d2e...}</p>
+                        
+                        <p class="mb-2"><span class="text-[#a855f7]">yohann@labo</span><span class="text-white">:</span><span class="text-[#ff9a8b]">~</span>$ ping 192.168.10.10</p>
+                        <p class="text-slate-400 mb-1">PING 192.168.10.10 (192.168.10.10) 56(84) bytes of data.</p>
+                        <p class="text-green-400 mb-1">64 bytes from 192.168.10.10: icmp_seq=1 ttl=128 time=0.45 ms</p>
+                        <p class="text-green-400 mb-1">64 bytes from 192.168.10.10: icmp_seq=2 ttl=128 time=0.38 ms</p>
+                        <span class="animate-pulse">_</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION VEILLE TECHNOLOGIQUE -->
+    <section id="veille" class="py-24 container mx-auto px-6 border-t border-white/5 reveal">
+        <header class="text-center mb-16">
+            <h2 class="text-xs font-black tracking-[0.4em] text-[#ff9a8b] uppercase mb-4">Curiosité & Actualité</h2>
+            <h3 class="text-4xl md:text-5xl font-black uppercase tracking-tighter">Veille <span class="text-gradient">Technologique</span></h3>
+            <p class="text-slate-400 text-sm mt-6 max-w-2xl mx-auto leading-relaxed">
+                Recherche continue et analyse de l'évolution des menaces et des innovations technologiques pour maintenir un haut niveau de sécurité.
+            </p>
+        </header>
+
+        <div class="grid lg:grid-cols-3 gap-8">
+            <!-- Sujet de veille -->
+            <div class="cyber-card p-8 rounded-2xl group lg:col-span-2 relative overflow-hidden">
+                <div class="corner corner-purple c-tl"></div><div class="corner corner-purple c-br"></div>
+                <div class="absolute right-0 top-0 opacity-5 text-9xl">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="inline-flex items-center gap-2 mb-6 px-3 py-1 rounded bg-[#a855f7]/10 border border-[#a855f7]/20 text-[#a855f7] text-[10px] font-bold uppercase tracking-widest">
+                    <i class="fas fa-crosshairs"></i> Sujet d'étude 2026
+                </div>
+                <h4 class="text-3xl font-black uppercase text-white tracking-tight mb-4 leading-tight">L'Intelligence Artificielle <br>en Cybersécurité</h4>
+                <p class="text-slate-400 text-sm leading-relaxed mb-6">
+                    Comment l'IA générative transforme le paysage des menaces (automatisation des attaques, phishing ultra-ciblé, deepfakes) et comment elle révolutionne la défense proactive (analyse comportementale, détection d'anomalies en temps réel, automatisation des SOC).
+                </p>
+                <div class="flex gap-3 mt-auto">
+                    <span class="px-2 py-1 bg-white/5 border border-white/10 rounded text-xs text-slate-300">#SOC</span>
+                    <span class="span px-2 py-1 bg-white/5 border border-white/10 rounded text-xs text-slate-300">#MachineLearning</span>
+                    <span class="px-2 py-1 bg-white/5 border border-white/10 rounded text-xs text-slate-300">#ZeroTrust</span>
+                </div>
+            </div>
+
+            <!-- Outils & Sources -->
+            <div class="cyber-card p-8 rounded-2xl group">
+                <div class="corner corner-peach c-tl"></div><div class="corner corner-peach c-br"></div>
+                <h4 class="text-lg font-black uppercase text-white mb-6 border-b border-white/10 pb-4">Mes Outils & Sources</h4>
+                
+                <ul class="space-y-3">
+                    <li>
+                        <a href="https://cyber.gouv.fr/" target="_blank" class="flex items-start gap-4 p-2 -ml-2 rounded-lg hover:bg-white/[0.05] transition group/link">
+                            <div class="w-8 h-8 rounded bg-[#ff9a8b]/10 flex items-center justify-center text-[#ff9a8b] group-hover/link:scale-110 group-hover/link:bg-[#ff9a8b]/20 transition">
+                                <i class="fas fa-shield-virus"></i>
+                            </div>
+                            <div>
+                                <p class="text-white text-sm font-bold group-hover/link:text-[#ff9a8b] transition">CERT-FR / ANSSI</p>
+                                <p class="text-slate-500 text-[10px] uppercase tracking-widest mt-1">Avis de sécurité</p>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://feedly.com/" target="_blank" class="flex items-start gap-4 p-2 -ml-2 rounded-lg hover:bg-white/[0.05] transition group/link">
+                            <div class="w-8 h-8 rounded bg-[#a855f7]/10 flex items-center justify-center text-[#a855f7] group-hover/link:scale-110 group-hover/link:bg-[#a855f7]/20 transition">
+                                <i class="fas fa-rss"></i>
+                            </div>
+                            <div>
+                                <p class="text-white text-sm font-bold group-hover/link:text-[#a855f7] transition">Agrégateur Feedly</p>
+                                <p class="text-slate-500 text-[10px] uppercase tracking-widest mt-1">The Hacker News, BleepingComputer</p>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.linkedin.com/" target="_blank" class="flex items-start gap-4 p-2 -ml-2 rounded-lg hover:bg-white/[0.05] transition group/link">
+                            <div class="w-8 h-8 rounded bg-blue-500/10 flex items-center justify-center text-blue-400 group-hover/link:scale-110 group-hover/link:bg-blue-500/20 transition">
+                                <i class="fab fa-linkedin-in"></i>
+                            </div>
+                            <div>
+                                <p class="text-white text-sm font-bold group-hover/link:text-blue-400 transition">Réseaux Pros</p>
+                                <p class="text-slate-500 text-[10px] uppercase tracking-widest mt-1">Experts & Chercheurs en sécu</p>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.nolimitsecu.fr/" target="_blank" class="flex items-start gap-4 p-2 -ml-2 rounded-lg hover:bg-white/[0.05] transition group/link">
+                            <div class="w-8 h-8 rounded bg-[#ff9a8b]/10 flex items-center justify-center text-[#ff9a8b] group-hover/link:scale-110 group-hover/link:bg-[#ff9a8b]/20 transition">
+                                <i class="fas fa-podcast"></i>
+                            </div>
+                            <div>
+                                <p class="text-white text-sm font-bold group-hover/link:text-[#ff9a8b] transition">Podcasts</p>
+                                <p class="text-slate-500 text-[10px] uppercase tracking-widest mt-1">NoLimitSecu, Underscore_</p>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Synthèse Articles (Mockup) -->
+        <div class="mt-8 grid md:grid-cols-3 gap-6">
+            <a href="https://www.revel8.ai/blog/2025-learnings-that-will-shape-your-2026-defense-strategy" target="_blank" class="cyber-card p-6 rounded-2xl group block hover:bg-white/[0.02]">
+                <p class="text-[#a855f7] text-[10px] font-bold uppercase tracking-widest mb-3">Mars 2026</p>
+                <h5 class="text-white font-bold text-sm leading-relaxed mb-3 group-hover:text-[#ff9a8b] transition">L'évolution des Deepfakes audio dans les attaques de Social Engineering (Vishing).</h5>
+                <p class="text-slate-500 text-xs line-clamp-2">L'utilisation croissante de l'IA pour cloner les voix des dirigeants afin de contourner les protocoles de validation financière.</p>
+            </a>
+            <a href="https://www.crowdstrike.com/en-us/blog/ai-vs-ai-cybersecurity-arms-race/" target="_blank" class="cyber-card p-6 rounded-2xl group block hover:bg-white/[0.02]">
+                <p class="text-[#ff9a8b] text-[10px] font-bold uppercase tracking-widest mb-3">Février 2026</p>
+                <h5 class="text-white font-bold text-sm leading-relaxed mb-3 group-hover:text-[#a855f7] transition">Microsoft Security Copilot : Comment l'IA aide les analystes SOC niveau 1.</h5>
+                <p class="text-slate-500 text-xs line-clamp-2">Analyse de l'intégration de modèles génératifs dans les EDR pour réduire le temps de réponse aux incidents (MTTR).</p>
+            </a>
+            <a href="veille techno/CERTFR-2026-CTI-001 -.pdf" target="_blank" class="cyber-card p-6 rounded-2xl group block hover:bg-white/[0.02]">
+                <p class="text-[#a855f7] text-[10px] font-bold uppercase tracking-widest mb-3">Janvier 2026</p>
+                <h5 class="text-white font-bold text-sm leading-relaxed mb-3 group-hover:text-[#ff9a8b] transition">WormGPT et FraudGPT : La démocratisation des malwares "as a Service".</h5>
+                <p class="text-slate-500 text-xs line-clamp-2">L'apparition de modèles d'IA développés spécifiquement pour le marché noir, échappant aux garde-fous d'OpenAI.</p>
+            </a>
+        </div>
+    </section>
+
+    <!-- SECTION CONTACT / RÉSEAUX -->
+    <section id="contact" class="py-24 container mx-auto px-6 border-t border-white/5 reveal">
+        <header class="text-center mb-16">
+            <h2 class="text-xs font-black tracking-[0.4em] text-[#a855f7] uppercase mb-4">Me contacter</h2>
+            <h3 class="text-4xl md:text-5xl font-black uppercase tracking-tighter">Réseaux <span class="text-gradient">Professionnels</span></h3>
+            <p class="text-slate-400 text-sm mt-6 max-w-2xl mx-auto leading-relaxed">
+                Une question, une opportunité d'alternance ou simplement envie d'échanger sur la cybersécurité ? N'hésitez pas à me contacter !
+            </p>
+        </header>
+
+        <div class="flex flex-col md:flex-row justify-center items-center gap-8 max-w-4xl mx-auto">
+            <!-- LinkedIn -->
+            <a href="https://www.linkedin.com/in/yohann-campillo%E2%80%94duquesne-9a6233367/" target="_blank" class="cyber-card p-6 rounded-2xl group w-full md:w-1/3 text-center flex flex-col items-center gap-4 hover:bg-white/[0.02]">
+                <div class="w-16 h-16 rounded-full bg-[#a855f7]/10 flex items-center justify-center border border-[#a855f7]/20 group-hover:bg-[#a855f7]/30 transition duration-300 group-hover:scale-110 group-hover:shadow-[0_0_20px_rgba(168,85,247,0.4)]">
+                    <i class="fab fa-linkedin-in text-[#a855f7] text-2xl"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white uppercase text-sm">LinkedIn</h4>
+                    <p class="text-[10px] text-slate-500 uppercase tracking-widest mt-1">Mon profil Pro</p>
+                </div>
+            </a>
+
+            <!-- Email -->
+            <a href="mailto:yohannncampillo@gmail.com" class="cyber-card p-6 rounded-2xl group w-full md:w-1/3 text-center flex flex-col items-center gap-4 hover:bg-white/[0.02] border-[#ff9a8b]/30 bg-gradient-to-br from-[#ff9a8b]/5 to-[#a855f7]/5">
+                <div class="w-16 h-16 rounded-full bg-gradient-to-br from-[#ff9a8b] to-[#a855f7] flex items-center justify-center shadow-lg shadow-[#a855f7]/20 group-hover:scale-110 transition duration-300">
+                    <i class="fas fa-envelope text-white text-2xl"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white uppercase text-sm">Email</h4>
+                    <p class="text-[10px] text-slate-300 uppercase tracking-widest mt-1">y.campillo@ecole-ipssi.net</p>
+                </div>
+            </a>
+
+            <!-- GitHub -->
+            <a href="https://github.com/yohannncampillo" target="_blank" class="cyber-card p-6 rounded-2xl group w-full md:w-1/3 text-center flex flex-col items-center gap-4 hover:bg-white/[0.02]">
+                <div class="w-16 h-16 rounded-full bg-[#ff9a8b]/10 flex items-center justify-center border border-[#ff9a8b]/20 group-hover:bg-[#ff9a8b]/30 transition duration-300 group-hover:scale-110 group-hover:shadow-[0_0_20px_rgba(255,154,139,0.4)]">
+                    <i class="fab fa-github text-[#ff9a8b] text-2xl"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white uppercase text-sm">GitHub</h4>
+                    <p class="text-[10px] text-slate-500 uppercase tracking-widest mt-1">Mes projets</p>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <!-- MODAL APERCU PDF -->
+    <div id="pdfModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 sm:p-6 transition-opacity duration-300 opacity-0 bg-black/80 backdrop-blur-sm">
+        <div class="bg-[#0a0a10] border border-[#a855f7]/30 rounded-2xl w-full max-w-5xl h-[85vh] flex flex-col overflow-hidden shadow-[0_0_40px_rgba(168,85,247,0.2)] transform scale-95 transition-transform duration-300" id="pdfModalContent">
+            <!-- Modal Header -->
+            <div class="flex justify-between items-center px-6 py-4 border-b border-white/10 bg-[#151520]/80">
+                <h3 id="pdfModalTitle" class="text-white font-bold uppercase tracking-widest text-sm text-gradient">Aperçu du document</h3>
+                <div class="flex gap-4 items-center">
+                    <a id="pdfModalDownload" href="#" target="_blank" class="text-slate-400 hover:text-[#ff9a8b] transition flex items-center gap-2 text-xs font-bold uppercase tracking-widest border border-white/10 px-3 py-1.5 rounded-lg hover:border-[#ff9a8b]/30" title="Ouvrir dans un nouvel onglet">
+                        <i class="fas fa-external-link-alt"></i> <span class="hidden sm:inline">Ouvrir en plein écran</span>
+                    </a>
+                    <button onclick="closePdfModal()" class="text-slate-400 hover:text-[#ff9a8b] transition text-2xl leading-none ml-2">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <!-- Modal Body (Iframe) -->
+            <div class="flex-grow bg-white/5 relative">
+                <!-- Loader visible pendant le chargement -->
+                <div class="absolute inset-0 flex items-center justify-center -z-10">
+                    <span class="text-slate-500 flex flex-col items-center gap-3">
+                        <i class="fas fa-circle-notch fa-spin text-3xl text-[#a855f7]"></i>
+                        <span class="text-[10px] font-bold uppercase tracking-widest">Chargement du document...</span>
+                    </span>
+                </div>
+                <iframe id="pdfIframe" src="" class="w-full h-full border-none relative z-10 bg-transparent" title="PDF Preview"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="py-10 border-t border-white/5 text-center bg-black/50">
+        <p class="text-[10px] uppercase tracking-[0.4em] text-slate-500 font-bold">
+            © 2026 Yohann Campillo | Portfolio BTS SIO SISR | Épreuve E4
+        </p>
+    </footer>
+
+    <!-- SCRIPT JS -->
+    <script>
+        // Effet Glow de la souris
+        document.addEventListener('mousemove', (e) => {
+            const glow = document.getElementById('glow');
+            const x = (e.clientX / window.innerWidth) * 100;
+            const y = (e.clientY / window.innerHeight) * 100;
+            glow.style.setProperty('--mouse-x', x + '%');
+            glow.style.setProperty('--mouse-y', y + '%');
+        });
+
+        // Animation Scroll Reveal
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                var elementVisible = 100;
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add("active");
+                }
+            }
+        }
+        window.addEventListener("scroll", reveal);
+        reveal(); // Déclenchement au chargement
+
+        // ScrollSpy (Surbrillance du lien de la navbar au défilement)
+        const sections = document.querySelectorAll("section");
+        const navItems = document.querySelectorAll(".nav-item");
+
+        window.addEventListener("scroll", () => {
+            let current = "";
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (scrollY >= (sectionTop - 200)) { // 200px de marge pour que ça s'allume au bon moment
+                    current = section.getAttribute("id");
+                }
+            });
+
+            navItems.forEach(item => {
+                item.classList.remove("active");
+                if (item.getAttribute("href") === `#${current}`) {
+                    item.classList.add("active");
+                }
+            });
+        });
+
+        // Filtrage des missions du portfolio (Mode Multi-Sélection)
+        let filters = {
+            ctx: new Set(['all']),
+            comp: new Set(['all'])
+        };
+
+        function filterMissions(type, value, btn) {
+            const currentSet = filters[type];
+
+            // Si on clique sur "Tous", on réinitialise la catégorie
+            if (value === 'all') {
+                currentSet.clear();
+                currentSet.add('all');
+                document.querySelectorAll(`.${type}-btn`).forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            } else {
+                // Si on clique sur un filtre spécifique, on enlève "Tous"
+                currentSet.delete('all');
+                document.querySelector(`.${type}-btn[onclick*="'all'"]`).classList.remove('active');
+
+                // Toggle du filtre (Ajout ou Suppression de la sélection)
+                if (currentSet.has(value)) {
+                    currentSet.delete(value);
+                    btn.classList.remove('active');
+                } else {
+                    currentSet.add(value);
+                    btn.classList.add('active');
+                }
+
+                // S'il n'y a plus de filtres sélectionnés, on remet "Tous" par défaut
+                if (currentSet.size === 0) {
+                    currentSet.add('all');
+                    document.querySelector(`.${type}-btn[onclick*="'all'"]`).classList.add('active');
+                }
+            }
+
+            // Application des filtres aux cartes
+            const missions = document.querySelectorAll('.mission-item');
+            missions.forEach(mission => {
+                const itemCtx = mission.dataset.ctx;
+                const itemComp = mission.dataset.comp;
+
+                // Une carte est affichée si elle correspond à l'un des filtres actifs de CHAQUE catégorie
+                const matchCtx = filters.ctx.has('all') || filters.ctx.has(itemCtx);
+                const matchComp = filters.comp.has('all') || filters.comp.has(itemComp);
+
+                if (matchCtx && matchComp) {
+                    mission.classList.remove('mission-hidden');
+                    mission.style.position = 'relative';
+                } else {
+                    mission.classList.add('mission-hidden');
+                    setTimeout(() => { if(mission.classList.contains('mission-hidden')) mission.style.position = 'absolute'; }, 400);
+                }
+            });
+        }
+
+        // --- GESTION DE LA MODALE PDF ---
+        function openPdfModal(pdfUrl, title) {
+            const modal = document.getElementById('pdfModal');
+            const iframe = document.getElementById('pdfIframe');
+            const modalTitle = document.getElementById('pdfModalTitle');
+            const downloadBtn = document.getElementById('pdfModalDownload');
+            const modalContent = document.getElementById('pdfModalContent');
+
+            // Empêcher le scroll de la page derrière
+            document.body.style.overflow = 'hidden';
+
+            // Remplir les informations
+            modalTitle.textContent = title;
+            downloadBtn.href = pdfUrl;
+            
+            // On ajoute #view=FitH pour forcer le lecteur PDF à s'adapter à la largeur
+            iframe.src = pdfUrl + "#view=FitH"; 
+
+            // Afficher la modale (flex puis opacité pour l'animation)
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modalContent.classList.remove('scale-95');
+                modalContent.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closePdfModal() {
+            const modal = document.getElementById('pdfModal');
+            const iframe = document.getElementById('pdfIframe');
+            const modalContent = document.getElementById('pdfModalContent');
+
+            // Rétablir le scroll de la page
+            document.body.style.overflow = 'scroll';
+
+            // Lancer l'animation de fermeture
+            modal.classList.add('opacity-0');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-95');
+
+            // Cacher complétement après l'animation
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                iframe.src = ''; // Vider l'iframe pour soulager le navigateur
+            }, 300);
+        }
+
+        // Fermer la modale si on clique en dehors de la boîte
+        document.getElementById('pdfModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePdfModal();
+            }
+        });
+    </script>
+</body>
+</html>
