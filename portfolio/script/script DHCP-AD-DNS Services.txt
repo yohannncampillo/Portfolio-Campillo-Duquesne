@@ -1,0 +1,218 @@
+# Exécuter en tant qu'Administrateur
+$On = $true
+
+while ($On) {
+    Clear-Host
+    Write-Host ""
+    Write-Host "  ╔══════════════════════════════════════════════════════════════╗" -ForegroundColor Cyan
+    Write-Host "  ║                                                              ║" -ForegroundColor Cyan
+    Write-Host "  ║" -ForegroundColor Cyan -NoNewline
+    Write-Host "           SERVER CONFIGURATION UTILITY (AD/DNS/DHCP)         " -ForegroundColor Black -BackgroundColor Cyan -NoNewline
+    Write-Host "║" -ForegroundColor Cyan
+    Write-Host "  ║                                                              ║" -ForegroundColor Cyan
+    Write-Host "  ╠══════════════════════════════════════════════════════════════╣" -ForegroundColor Cyan
+    Write-Host "  ║                                                              ║" -ForegroundColor Cyan
+    Write-Host "  ║   " -ForegroundColor Cyan -NoNewline; Write-Host "[ 1 ]" -ForegroundColor Yellow -NoNewline; Write-Host " Renommer l'ordinateur (Restart)                    ║" -ForegroundColor White
+    Write-Host "  ║   " -ForegroundColor Cyan -NoNewline; Write-Host "[ 2 ]" -ForegroundColor Yellow -NoNewline; Write-Host " Configurer l'adresse IP statique                   ║" -ForegroundColor White
+    Write-Host "  ║   " -ForegroundColor Cyan -NoNewline; Write-Host "[ 3 ]" -ForegroundColor Yellow -NoNewline; Write-Host " Installer le rôle DNS                              ║" -ForegroundColor White
+    Write-Host "  ║   " -ForegroundColor Cyan -NoNewline; Write-Host "[ 4 ]" -ForegroundColor Yellow -NoNewline; Write-Host " Installer le rôle DHCP                             ║" -ForegroundColor White
+    Write-Host "  ║   " -ForegroundColor Cyan -NoNewline; Write-Host "[ 5 ]" -ForegroundColor Magenta -NoNewline; Write-Host " GESTION DHCP (Scopes & Réservations)               ║" -ForegroundColor White
+    Write-Host "  ║   " -ForegroundColor Cyan -NoNewline; Write-Host "[ 6 ]" -ForegroundColor Yellow -NoNewline; Write-Host " Installer AD Domain-Services                       ║" -ForegroundColor White
+    Write-Host "  ║   " -ForegroundColor Cyan -NoNewline; Write-Host "[ 7 ]" -ForegroundColor Yellow -NoNewline; Write-Host " Autoriser DHCP & Options (Router/DNS)              ║" -ForegroundColor White
+    Write-Host "  ║   " -ForegroundColor Cyan -NoNewline; Write-Host "[ 8 ]" -ForegroundColor Yellow -NoNewline; Write-Host " Créer Zone de recherche inversée DNS               ║" -ForegroundColor White
+    Write-Host "  ║   " -ForegroundColor Cyan -NoNewline; Write-Host "[ 9 ]" -ForegroundColor Yellow -NoNewline; Write-Host " Créer un utilisateur AD                            ║" -ForegroundColor White
+    Write-Host "  ║                                                              ║" -ForegroundColor Cyan
+    Write-Host "  ║   " -ForegroundColor Cyan -NoNewline; Write-Host "[ 0 ]" -ForegroundColor Red -NoNewline; Write-Host " Quitter le script                                  ║" -ForegroundColor Gray
+    Write-Host "  ║                                                              ║" -ForegroundColor Cyan
+    Write-Host "  ╚══════════════════════════════════════════════════════════════╝" -ForegroundColor Cyan
+    Write-Host ""
+    
+    $choice = Read-Host "  ▶ Veuillez saisir votre choix "
+
+    switch ($choice) {
+        "1" {
+            Write-Host "`n  [ Configuration du Nom ]" -ForegroundColor DarkCyan
+            $newName = Read-Host "  > Nouveau nom de l'ordinateur"
+            Rename-Computer -NewName $newName -Force
+            
+            Write-Host "`n  RÉSULTAT DE L'OPÉRATION  " -ForegroundColor White -BackgroundColor DarkGreen
+            Write-Host "  L'ordinateur a été renommé en $newName." -ForegroundColor Green
+            Write-Host "  Redémarrage en cours pour appliquer les changements..." -ForegroundColor Cyan
+            Start-Sleep -Seconds 3
+            Restart-Computer
+        }
+
+        "2" {
+            Write-Host "`n  [ Configuration Réseau ]" -ForegroundColor DarkCyan
+            Get-NetAdapter | Format-Table Name, InterfaceDescription, Status -AutoSize
+            $iface = Read-Host "  > Nom de l'interface (ex: Ethernet)"
+            $ip = Read-Host "  > Adresse IP (ex: 192.168.10.1)"
+            $mask = Read-Host "  > Prefix (ex: 24)"
+            $gw = Read-Host "  > Passerelle (GW)"
+            
+            New-NetIPAddress -InterfaceAlias $iface -IPAddress $ip -PrefixLength $mask -DefaultGateway $gw | Out-Null
+            Set-DnsClientServerAddress -InterfaceAlias $iface -ServerAddresses $ip
+            
+            Write-Host "`n  RÉSULTAT DE L'OPÉRATION  " -ForegroundColor White -BackgroundColor DarkGreen
+            ipconfig /all
+            Write-Host "`n  [OK] IP configurée avec succès." -ForegroundColor Green
+            Pause
+        }
+
+        "3" {
+            Write-Host "`n  [ Installation DNS ]" -ForegroundColor DarkCyan
+            Install-WindowsFeature DNS -IncludeManagementTools | Out-Null
+            Add-DnsServerForwarder -IPAddress 8.8.8.8
+            
+            Write-Host "`n  RÉSULTAT DE L'OPÉRATION  " -ForegroundColor White -BackgroundColor DarkGreen
+            Get-WindowsFeature DNS | Select-Object Name, InstallState | Format-Table -AutoSize
+            Get-DnsServerForwarder | Format-Table -AutoSize
+            Write-Host "  [OK] DNS installé et Redirecteur configuré." -ForegroundColor Green
+            Pause
+        }
+
+        "4" {
+            Write-Host "`n  [ Installation DHCP ]" -ForegroundColor DarkCyan
+            Install-WindowsFeature DHCP -IncludeManagementTools | Out-Null
+            
+            Write-Host "`n  RÉSULTAT DE L'OPÉRATION  " -ForegroundColor White -BackgroundColor DarkGreen
+            Get-WindowsFeature DHCP | Select-Object Name, InstallState | Format-Table -AutoSize
+            Write-Host "  [OK] DHCP installé." -ForegroundColor Green
+            Pause
+        }
+
+        "5" {
+            $inDHCP = $true
+            while ($inDHCP) {
+                Clear-Host
+                Write-Host ""
+                Write-Host "  ┌────────────────────────────────────────────────────────────┐" -ForegroundColor Magenta
+                Write-Host "  │                 SOUS-MENU : GESTION DHCP                   │" -ForegroundColor White -BackgroundColor Magenta
+                Write-Host "  ├────────────────────────────────────────────────────────────┤" -ForegroundColor Magenta
+                Write-Host "  │                                                            │" -ForegroundColor Magenta
+                Write-Host "  │  " -ForegroundColor Magenta -NoNewline; Write-Host "[ A ]" -ForegroundColor Yellow -NoNewline; Write-Host " Créer un nouveau Scope                              │" -ForegroundColor White
+                Write-Host "  │  " -ForegroundColor Magenta -NoNewline; Write-Host "[ B ]" -ForegroundColor Yellow -NoNewline; Write-Host " Créer une Réservation IP                            │" -ForegroundColor White
+                Write-Host "  │  " -ForegroundColor Magenta -NoNewline; Write-Host "[ C ]" -ForegroundColor Yellow -NoNewline; Write-Host " Supprimer un Scope                                  │" -ForegroundColor White
+                Write-Host "  │  " -ForegroundColor Magenta -NoNewline; Write-Host "[ L ]" -ForegroundColor Yellow -NoNewline; Write-Host " Lister les Scopes créés                             │" -ForegroundColor White
+                Write-Host "  │                                                            │" -ForegroundColor Magenta
+                Write-Host "  │  " -ForegroundColor Magenta -NoNewline; Write-Host "[ Q ]" -ForegroundColor Red -NoNewline; Write-Host " Retour au menu principal                            │" -ForegroundColor Gray
+                Write-Host "  └────────────────────────────────────────────────────────────┘" -ForegroundColor Magenta
+                Write-Host ""
+                
+                $sub = (Read-Host "  ▶ Saisir votre choix").ToUpper()
+                
+                switch ($sub) {
+                    "A" {
+                        Write-Host "`n  [ Création d'un Scope ]" -ForegroundColor DarkCyan
+                        $sName = Read-Host "  > Nom du scope"
+                        $sStart = Read-Host "  > IP Début"
+                        $sEnd = Read-Host "  > IP Fin"
+                        $sMask = Read-Host "  > Masque (ex: 255.255.255.0)"
+                        Add-DhcpServerv4Scope -Name $sName -StartRange $sStart -EndRange $sEnd -SubnetMask $sMask -State Active
+                        
+                        Write-Host "`n  RÉSULTAT DE L'OPÉRATION  " -ForegroundColor White -BackgroundColor DarkGreen
+                        Get-DhcpServerv4Scope | Format-Table -AutoSize
+                        Write-Host "  [OK] Scope créé." -ForegroundColor Green
+                        Pause
+                    }
+                    "B" {
+                        Write-Host "`n  [ Création d'une Réservation ]" -ForegroundColor DarkCyan
+                        $sID = Read-Host "  > ID du Scope (ex: 192.168.10.0)"
+                        $mac = Read-Host "  > Adresse MAC (ex: 00-11-22-33-44-55)"
+                        $rIP = Read-Host "  > IP à réserver"
+                        Add-DhcpServerv4Reservation -ScopeId $sID -IPAddress $rIP -ClientId $mac
+                        
+                        Write-Host "`n  RÉSULTAT DE L'OPÉRATION  " -ForegroundColor White -BackgroundColor DarkGreen
+                        Get-DhcpServerv4Reservation -ScopeId $sID | Format-Table -AutoSize
+                        Write-Host "  [OK] Réservation effectuée." -ForegroundColor Green
+                        Pause
+                    }
+                    "C" {
+                        Write-Host "`n  [ Suppression d'un Scope ]" -ForegroundColor DarkCyan
+                        Get-DhcpServerv4Scope | Select-Object ScopeId, Name | Format-Table -AutoSize
+                        $sID = Read-Host "  > Entrez l'ID du scope à supprimer"
+                        Remove-DhcpServerv4Scope -ScopeId $sID -Force
+                        
+                        Write-Host "`n  RÉSULTAT DE L'OPÉRATION  " -ForegroundColor White -BackgroundColor DarkRed
+                        Get-DhcpServerv4Scope | Format-Table -AutoSize
+                        Write-Host "  [INFO] Scope supprimé." -ForegroundColor Red
+                        Pause
+                    }
+                    "L"{
+                        Write-Host "`n  RÉSULTAT DE L'OPÉRATION  " -ForegroundColor White -BackgroundColor DarkCyan
+                        Get-DhcpServerv4Scope | Format-Table -AutoSize
+                        Write-Host "  [INFO] Voici la liste des Scopes actuels." -ForegroundColor Cyan
+                        Pause
+                    }
+                    "Q" { $inDHCP = $false }
+                }
+            }
+        }
+
+        "6" {
+            Write-Host "`n  [ Installation AD DS ]" -ForegroundColor DarkCyan
+            $domain = Read-Host "  > Nom de domaine (ex: entreprise.local)"
+            $netbios = Read-Host "  > Nom NetBIOS (ex: ENTREPRISE)"
+            $pass = Read-Host "  > Mot de passe DSRM" -AsSecureString
+            
+            Write-Host "`n  [INFO] Installation du rôle..." -ForegroundColor Yellow
+            Install-WindowsFeature AD-Domain-Services -IncludeManagementTools | Out-Null
+            
+            Write-Host "`n  [INFO] Promotion en cours, le serveur redémarrera automatiquement..." -ForegroundColor Yellow
+            Start-Sleep -Seconds 3
+            Install-ADDSForest -DomainName $domain -DomainNetbiosName $netbios -InstallDNS -SafeModeAdministratorPassword $pass -Force
+        }
+
+        "7" {
+            Write-Host "`n  [ Configuration DHCP AD ]" -ForegroundColor DarkCyan
+            $sid = Read-Host "  > Scope ID"
+            $gw = Read-Host "  > Passerelle (Router)"
+            $dns = Read-Host "  > IP du Serveur DNS"
+            $dom = Read-Host "  > Nom du domaine DNS"
+            
+            Set-DhcpServerv4OptionValue -ScopeId $sid -Router $gw -DnsServer $dns -DnsDomain $dom
+            Add-DhcpServerInDC -DnsName $dom -IPAddress $dns
+            
+            Write-Host "`n  RÉSULTAT DE L'OPÉRATION  " -ForegroundColor White -BackgroundColor DarkGreen
+            Write-Host "`n  > Options du Scope $sid :" -ForegroundColor Yellow
+            Get-DhcpServerv4OptionValue -ScopeId $sid | Format-Table -AutoSize
+            Write-Host "`n  > Serveurs DHCP Autorisés (AD) :" -ForegroundColor Yellow
+            Get-DhcpServerInDC | Format-Table -AutoSize
+            Write-Host "  [OK] Configuration DHCP AD terminée." -ForegroundColor Green
+            Pause
+        }
+
+        "8" {
+            Write-Host "`n  [ Création Zone DNS ]" -ForegroundColor DarkCyan
+            $netID = Read-Host "  > Network ID (ex: 192.168.10.0/24)"
+            Add-DnsServerPrimaryZone -NetworkID $netID -ReplicationScope "Domain" -DynamicUpdate "Secure"
+            
+            Write-Host "`n  RÉSULTAT DE L'OPÉRATION  " -ForegroundColor White -BackgroundColor DarkGreen
+            Get-DnsServerZone | Format-Table ZoneName, ZoneType, IsAutoCreated -AutoSize
+            Write-Host "  [OK] Zone inversée créée." -ForegroundColor Green
+            Pause
+        }
+
+        "9" {
+            Write-Host "`n  [ Création Utilisateur AD ]" -ForegroundColor DarkCyan
+            $uName = Read-Host "  > Nom d'utilisateur"
+            $uPass = Read-Host "  > Mot de passe" -AsSecureString
+            New-ADUser -Name $uName -SamAccountName $uName -AccountPassword $uPass -Enabled $true -PasswordNeverExpires $true
+            
+            Write-Host "`n  RÉSULTAT DE L'OPÉRATION  " -ForegroundColor White -BackgroundColor DarkGreen
+            Get-ADUser -Identity $uName -Properties Enabled, PasswordNeverExpires | Select-Object Name, SamAccountName, Enabled, PasswordNeverExpires | Format-List
+            Write-Host "  [OK] Utilisateur créé." -ForegroundColor Green
+            Pause
+        }
+
+        "0" {
+            $On = $false
+            Write-Host "`n  Fermeture du script..." -ForegroundColor DarkGray
+        }
+
+        default {
+            Write-Host "`n  [ERREUR] Choix invalide. Veuillez réessayer." -ForegroundColor White -BackgroundColor DarkRed
+            Start-Sleep -Seconds 2
+        }
+    }
+}
